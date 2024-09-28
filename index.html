@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConnectHub</title>
+    <!-- Estilos generales y para los componentes -->
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Menú lateral */
+        .menu {
+            width: 220px;
+            background-color: #f8f9fa;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 1rem;
+            border-right: 1px solid #ccc;
+            transition: all 0.3s ease;
+        }
+
+        .menu a {
+            display: block;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: #333;
+            margin-bottom: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        /* Barra de navegación */
+        .navbar {
+            width: calc(100% - 220px);
+            margin-left: 220px;
+            background-color: #007bff;
+            padding: 1rem;
+            color: #fff;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Contenedor principal */
+        .container {
+            margin-left: 220px;
+            margin-top: 70px;
+            padding: 2rem;
+            flex-grow: 1;
+            transition: all 0.3s ease;
+        }
+
+        /* Estilos para las Cards */
+        .card {
+            border: 1px solid #ccc;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .card button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .card button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Breadcrumbs */
+        .breadcrumb {
+            background-color: #f8f9fa;
+            padding: 0.75rem;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .breadcrumb a {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        .breadcrumb span {
+            color: #6c757d;
+        }
+
+        /* Chips */
+        .chip {
+            display: inline-block;
+            padding: 0.5rem;
+            border: 1px solid #007bff;
+            border-radius: 16px;
+            background-color: #e9f4ff;
+            color: #007bff;
+            margin-right: 0.5rem;
+        }
+
+        /* Listas */
+        .list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .list-item {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .list-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Iconos */
+        .icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        /* Estilos para la imagen */
+        .image {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        /* Imagen de bienvenida */
+        .welcome-image {
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+            margin: 1rem auto;
+            display: block;
+        }
+
+        /* Estilos específicos para cada vista */
+        .profile-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .profile-container img {
+            width: 150px;
+            height: 150px;
+        }
+
+        .profile-container .details {
+            max-width: 500px;
+        }
+
+        .opportunities .opportunity {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+
+        .opportunity:hover {
+            background-color: #f1f1f1;
+        }
+
+        .opportunity-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .opportunity-company {
+            color: #6c757d;
+            margin: 0.25rem 0;
+        }
+
+        .opportunity-description {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .opportunity-apply {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .opportunity-apply:hover {
+            background-color: #218838;
+        }
+
+        /* Formulario de contacto */
+        .contact-form {
+            max-width: 600px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .contact-form button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            align-self: flex-start;
+        }
+
+        .contact-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Estilos para dispositivos móviles */
+        @media (max-width: 768px) {
+            .menu {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #ccc;
+                position: relative;
+                padding: 0;
+            }
+
+            .menu a {
+                padding: 1rem;
+                margin: 0;
+                border-bottom: 1px solid #ccc;
+            }
+
+            .navbar {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .container {
+                margin-left: 0;
+                margin-top: 70px;
+                padding: 1rem;
+            }
+
+            .breadcrumb {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .card {
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .profile-container {
+                flex-direction: column;
+            }
+        }
+
+        /* Estilos para tablets */
+        @media (min-width: 768px) and (max-width: 1024px) {
+            .menu {
+                width: 200px;
+            }
+
+            .navbar {
+                width: calc(100% - 200px);
+                margin-left: 200px;
+            }
+
+            .container {
+                margin-left: 200px;
+                margin-top: 70px;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú Lateral -->
+    <div class="menu">
+        <a href="#" id="home">Inicio</a>
+        <a href="#" id="profile">Perfil</a>
+        <a href="#" id="connections">Conexiones</a>
+        <a href="#" id="opportunities">Oportunidades</a>
+        <a href="#" id="settings">Configuración</a>
+        <a href="#" id="contact">Contacto</a>
+    </div>
+
+    <!-- Barra de Navegación -->
+    <div class="navbar" id="navbar">
+        ConnectHub - Página Principal
+    </div>
+
+    <!-- Contenido Principal -->
+    <div class="container" id="container">
+        <!-- Breadcrumbs -->
+        <div class="breadcrumb">
+            <a href="#">Inicio</a> <span>/</span> <span>Página Principal</span>
+        </div>
+        
+        <!-- Imagen de bienvenida -->
+        <img class="welcome-image" src="https://via.placeholder.com/600x300?text=Bienvenido+a+ConnectHub" alt="Bienvenido a ConnectHub">
+
+        <!-- Card de ejemplo -->
+        <div class="card">
+            <h2>John Doe</h2>
+            <img class="image" src="https://via.placeholder.com/100" alt="Profile" onclick="navigateTo('profile')">
+            <p>Desarrollador Web con experiencia en React y Node.js.</p>
+            <div class="chip">React</div>
+            <div class="chip">Node.js</div>
+            <button onclick="navigateTo('profile')">Ver Perfil</button>
+        </div>
+        
+        <div class="card">
+            <h2>Jane Smith</h2>
+            <img class="image" src="https://via.placeholder.com/100" alt="Profile" onclick="navigateTo('profile')">
+            <p>Diseñadora Gráfica especializada en UI/UX.</p>
+            <div class="chip">UI/UX</div>
+            <div class="chip">Photoshop</div>
+            <button onclick="navigateTo('profile')">Ver Perfil</button>
+        </div>
+        
+        <!-- Nueva Sección: Proyectos Destacados -->
+        <div class="card">
+            <h2>Proyectos Destacados</h2>
+            <div class="list">
+                <div class="list-item">
+                    <span><i class="icon">💼</i> Proyecto 1: Plataforma de E-learning</span>
+                    <button onclick="navigateToProject('elearning')">Ver Proyecto</button>
+                </div>
+                <div class="list-item">
+                    <span><i class="icon">💼</i> Proyecto 2: Aplicación de Gestión de Tareas</span>
+                    <button onclick="navigateToProject('task-manager')">Ver Proyecto</button>
+                </div>
+                <div class="list-item">
+                    <span><i class="icon">💼</i> Proyecto 3: Sistema de Reservas Online</span>
+                    <button onclick="navigateToProject('reservation-system')">Ver Proyecto</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript para navegación y actualización de contenido -->
+    <script>
+        // Función para actualizar el contenido basado en la sección seleccionada
+        function updateContent(section) {
+            const container = document.getElementById('container');
+            let content = '';
+
+            switch(section) {
+                case 'profile':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Perfil</span>
+                        </div>
+                        <div class="profile-container">
+                            <img class="image" src="https://via.placeholder.com/150" alt="Profile">
+                            <div class="details">
+                                <h2>John Doe</h2>
+                                <p><strong>Email:</strong> johndoe@example.com</p>
+                                <p><strong>Teléfono:</strong> +123456789</p>
+                                <p><strong>Descripción:</strong> Soy un desarrollador web con más de 5 años de experiencia en el desarrollo de aplicaciones front-end y back-end. Mis principales habilidades incluyen React, Node.js y MongoDB.</p>
+                                <div class="chip">React</div>
+                                <div class="chip">Node.js</div>
+                                <div class="chip">MongoDB</div>
+                                <button onclick="alert('Perfil actualizado')">Editar Perfil</button>
+                            </div>
+                        </div>`;
+                    break;
+                case 'connections':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Conexiones</span>
+                        </div>
+                        <ul class="list">
+                            <li class="list-item">
+                                <span><i class="icon">👤</i> Alice Johnson</span>
+                                <button onclick="navigateTo('profile')">Ver Perfil</button>
+                            </li>
+                            <li class="list-item">
+                                <span><i class="icon">👤</i> Bob Williams</span>
+                                <button onclick="navigateTo('profile')">Ver Perfil</button>
+                            </li>
+                            <li class="list-item">
+                                <span><i class="icon">👤</i> Charlie Brown</span>
+                                <button onclick="navigateTo('profile')">Ver Perfil</button>
+                            </li>
+                            <li class="list-item">
+                                <span><i class="icon">👤</i> Daniel White</span>
+                                <button onclick="navigateTo('profile')">Ver Perfil</button>
+                            </li>
+                        </ul>`;
+                    break;
+                case 'opportunities':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Oportunidades</span>
+                        </div>
+                        <div class="opportunities">
+                            <div class="opportunity">
+                                <p class="opportunity-title">Desarrollador React</p>
+                                <p class="opportunity-company">Tech Solutions</p>
+                                <p class="opportunity-description">Buscamos un desarrollador con experiencia en React para trabajar en proyectos innovadores.</p>
+                                <button class="opportunity-apply" onclick="alert('Has aplicado a Desarrollador React')">Aplicar</button>
+                            </div>
+                            <div class="opportunity">
+                                <p class="opportunity-title">Diseñador Gráfico</p>
+                                <p class="opportunity-company">Creative Studio</p>
+                                <p class="opportunity-description">Se necesita un diseñador gráfico con experiencia en UI/UX y Adobe Photoshop.</p>
+                                <button class="opportunity-apply" onclick="alert('Has aplicado a Diseñador Gráfico')">Aplicar</button>
+                            </div>
+                            <div class="opportunity">
+                                <p class="opportunity-title">Gerente de Proyecto</p>
+                                <p class="opportunity-company">Global Corp</p>
+                                <p class="opportunity-description">Estamos buscando un gerente de proyecto para liderar equipos en el desarrollo de software.</p>
+                                <button class="opportunity-apply" onclick="alert('Has aplicado a Gerente de Proyecto')">Aplicar</button>
+                            </div>
+                        </div>`;
+                    break;
+                case 'settings':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Configuración</span>
+                        </div>
+                        <div class="card">
+                            <h2>Configuración de Cuenta</h2>
+                            <p>Aquí puedes actualizar tu información personal y preferencias.</p>
+                            <button onclick="alert('Contraseña actualizada')">Cambiar Contraseña</button>
+                            <button onclick="alert('Email actualizado')">Actualizar Email</button>
+                        </div>`;
+                    break;
+                case 'contact':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Contacto</span>
+                        </div>
+                        <div class="card">
+                            <h2>Contacto</h2>
+                            <p>Puedes ponerte en contacto con nosotros utilizando el formulario a continuación.</p>
+                            <div class="contact-form">
+                                <input type="text" placeholder="Nombre" required>
+                                <input type="email" placeholder="Email" required>
+                                <textarea rows="4" placeholder="Mensaje" required></textarea>
+                                <button onclick="alert('Mensaje enviado')">Enviar Mensaje</button>
+                            </div>
+                        </div>`;
+                    break;
+                case 'elearning':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Proyectos</span> <span>/</span> <span>Plataforma de E-learning</span>
+                        </div>
+                        <div class="card">
+                            <h2>Plataforma de E-learning</h2>
+                            <p>Descripción del proyecto: Plataforma que permite a los usuarios acceder a cursos en línea y gestionar su progreso. Implementada utilizando tecnologías como React, Node.js y MongoDB.</p>
+                            <button onclick="alert('¡Gracias por tu interés en este proyecto!')">Más Información</button>
+                        </div>`;
+                    break;
+                case 'task-manager':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Proyectos</span> <span>/</span> <span>Aplicación de Gestión de Tareas</span>
+                        </div>
+                        <div class="card">
+                            <h2>Aplicación de Gestión de Tareas</h2>
+                            <p>Descripción del proyecto: Aplicación que permite a los usuarios crear, asignar y monitorear tareas de manera eficiente. Incluye funcionalidades como asignación de prioridades, notificaciones y reportes.</p>
+                            <button onclick="alert('¡Gracias por tu interés en este proyecto!')">Más Información</button>
+                        </div>`;
+                    break;
+                case 'reservation-system':
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Proyectos</span> <span>/</span> <span>Sistema de Reservas Online</span>
+                        </div>
+                        <div class="card">
+                            <h2>Sistema de Reservas Online</h2>
+                            <p>Descripción del proyecto: Sistema que permite a los usuarios realizar reservas para eventos, citas y servicios. Ofrece integración con calendarios y pagos en línea.</p>
+                            <button onclick="alert('¡Gracias por tu interés en este proyecto!')">Más Información</button>
+                        </div>`;
+                    break;
+                default:
+                    content = `
+                        <div class="breadcrumb">
+                            <a href="#">Inicio</a> <span>/</span> <span>Página Principal</span>
+                        </div>
+                        <img class="welcome-image" src="https://via.placeholder.com/600x300?text=Bienvenido+a+ConnectHub" alt="Bienvenido a ConnectHub">
+                        <!-- Card de ejemplo -->
+                        <div class="card">
+                            <h2>John Doe</h2>
+                            <img class="image" src="https://via.placeholder.com/100" alt="Profile" onclick="navigateTo('profile')">
+                            <p>Desarrollador Web con experiencia en React y Node.js.</p>
+                            <div class="chip">React</div>
+                            <div class="chip">Node.js</div>
+                            <button onclick="navigateTo('profile')">Ver Perfil</button>
+                        </div>
+                        
+                        <div class="card">
+                            <h2>Jane Smith</h2>
+                            <img class="image" src="https://via.placeholder.com/100" alt="Profile" onclick="navigateTo('profile')">
+                            <p>Diseñadora Gráfica especializada en UI/UX.</p>
+                            <div class="chip">UI/UX</div>
+                            <div class="chip">Photoshop</div>
+                            <button onclick="navigateTo('profile')">Ver Perfil</button>
+                        </div>
+                        
+                        <!-- Nueva Sección: Proyectos Destacados -->
+                        <div class="card">
+                            <h2>Proyectos Destacados</h2>
+                            <div class="list">
+                                <div class="list-item">
+                                    <span><i class="icon">💼</i> Proyecto 1: Plataforma de E-learning</span>
+                                    <button onclick="navigateToProject('elearning')">Ver Proyecto</button>
+                                </div>
+                                <div class="list-item">
+                                    <span><i class="icon">💼</i> Proyecto 2: Aplicación de Gestión de Tareas</span>
+                                    <button onclick="navigateToProject('task-manager')">Ver Proyecto</button>
+                                </div>
+                                <div class="list-item">
+                                    <span><i class="icon">💼</i> Proyecto 3: Sistema de Reservas Online</span>
+                                    <button onclick="navigateToProject('reservation-system')">Ver Proyecto</button>
+                                </div>
+                            </div>
+                        </div>`;
+            }
+
+            container.innerHTML = content;
+        }
+
+        // Manejadores de eventos para los enlaces del menú
+        document.querySelectorAll('.menu a').forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const section = event.target.id;
+                document.getElementById('navbar').innerText = `ConnectHub - ${section.charAt(0).toUpperCase() + section.slice(1)}`;
+                updateContent(section);
+            });
+        });
+
+        // Función para navegar a una sección específica
+        function navigateTo(section) {
+            document.getElementById('navbar').innerText = `ConnectHub - ${section.charAt(0).toUpperCase() + section.slice(1)}`;
+            updateContent(section);
+        }
+
+        // Función para navegar a los proyectos específicos
+        function navigateToProject(project) {
+            document.getElementById('navbar').innerText = `ConnectHub - Proyecto`;
+            updateContent(project);
+        }
+
+        // Cargar vista inicial (Inicio)
+        updateContent('home');
+    </script>
+</body>
+</html>
